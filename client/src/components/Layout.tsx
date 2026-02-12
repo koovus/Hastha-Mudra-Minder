@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20">
       <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-center relative">
-          <h1 className="text-2xl font-serif font-medium text-primary tracking-wide">Prana</h1>
+          <h1 className="text-2xl font-serif font-medium text-primary tracking-wide">Hastha</h1>
         </div>
       </header>
 
