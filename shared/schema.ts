@@ -1,18 +1,42 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
+export const mudras = pgTable("mudras", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  name: text("name").notNull(),
+  sanskritName: text("sanskrit_name").notNull(),
+  description: text("description").notNull(),
+  benefits: text("benefits").array().notNull(),
+  instructions: text("instructions").array().notNull(),
+  image: text("image"),
+  category: text("category").notNull(),
+  isBuiltIn: boolean("is_built_in").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const journalEntries = pgTable("journal_entries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  audioUrl: text("audio_url"),
+  duration: text("duration").notNull(),
+  mood: text("mood"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export const insertMudraSchema = createInsertSchema(mudras).omit({
+  id: true,
+  createdAt: true,
+  isBuiltIn: true,
+});
+
+export const insertJournalSchema = createInsertSchema(journalEntries).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertMudra = z.infer<typeof insertMudraSchema>;
+export type Mudra = typeof mudras.$inferSelect;
+export type InsertJournal = z.infer<typeof insertJournalSchema>;
+export type JournalEntry = typeof journalEntries.$inferSelect;
