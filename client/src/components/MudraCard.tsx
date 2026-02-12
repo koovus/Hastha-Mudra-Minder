@@ -1,11 +1,11 @@
-import { Mudra } from "@/lib/mudras";
+import type { MudraType } from "@/lib/mudras";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Hand } from "lucide-react";
 import { Link } from "wouter";
 
 interface MudraCardProps {
-  mudra: Mudra;
+  mudra: MudraType;
 }
 
 export default function MudraCard({ mudra }: MudraCardProps) {
@@ -13,11 +13,17 @@ export default function MudraCard({ mudra }: MudraCardProps) {
     <Link href={`/mudra/${mudra.id}`}>
       <Card className="overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer group bg-card">
         <div className="aspect-[4/3] w-full overflow-hidden bg-muted/30 relative">
-          <img 
-            src={mudra.image} 
-            alt={mudra.name}
-            className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out" 
-          />
+          {mudra.image ? (
+            <img 
+              src={mudra.image} 
+              alt={mudra.name}
+              className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out" 
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Hand className="w-16 h-16 text-muted-foreground/30" />
+            </div>
+          )}
           <Badge className="absolute top-3 right-3 bg-white/80 text-foreground backdrop-blur-sm hover:bg-white border-none font-normal text-xs uppercase tracking-wider">
             {mudra.category}
           </Badge>

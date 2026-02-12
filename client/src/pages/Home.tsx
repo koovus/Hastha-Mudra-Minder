@@ -1,18 +1,20 @@
-import { useState } from "react";
 import { Link } from "wouter";
-import { mudras } from "@/lib/mudras";
+import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import MudraCard from "@/components/MudraCard";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Loader2 } from "lucide-react";
+import type { MudraType } from "@/lib/mudras";
 
 export default function Home() {
-  const featuredMudra = mudras[0];
+  const { data: mudras, isLoading } = useQuery<MudraType[]>({
+    queryKey: ["/api/mudras"],
+  });
+
+  const featuredMudra = mudras?.[0];
 
   return (
     <Layout>
       <div className="space-y-8 animate-in fade-in duration-700">
-        
-        {/* Welcome Header */}
         <div className="pt-4 pb-2">
           <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium mb-2">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -23,7 +25,6 @@ export default function Home() {
           </h2>
         </div>
 
-        {/* Featured Card */}
         <section>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-serif">Daily Practice</h3>
@@ -31,10 +32,15 @@ export default function Home() {
               <Sparkles className="w-3 h-3" /> Recommended
             </span>
           </div>
-          <MudraCard mudra={featuredMudra} />
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : featuredMudra ? (
+            <MudraCard mudra={featuredMudra} />
+          ) : null}
         </section>
 
-        {/* Quick Actions */}
         <section className="grid grid-cols-2 gap-4">
           <Link href="/breathe">
             <a className="bg-primary/5 hover:bg-primary/10 transition-colors p-6 rounded-2xl flex flex-col items-center text-center gap-3 border border-primary/10">
@@ -67,7 +73,6 @@ export default function Home() {
           </Link>
         </section>
 
-        {/* Quote */}
         <div className="bg-muted/30 p-6 rounded-xl border border-border/50 text-center">
           <p className="font-serif italic text-lg text-foreground/80 leading-relaxed">
             "Quiet the mind, and the soul will speak."

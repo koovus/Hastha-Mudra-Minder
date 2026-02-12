@@ -1,15 +1,36 @@
 import Layout from "@/components/Layout";
-import { mudras } from "@/lib/mudras";
+import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Clock, ArrowLeft, CheckCircle2, Loader2, Hand } from "lucide-react";
+import type { MudraType } from "@/lib/mudras";
 
 export default function MudraDetail() {
   const [, params] = useRoute("/mudra/:id");
-  const mudra = mudras.find(m => m.id === params?.id);
 
-  if (!mudra) return <div className="p-8">Mudra not found</div>;
+  const { data: mudra, isLoading } = useQuery<MudraType>({
+    queryKey: [`/api/mudras/${params?.id}`],
+    enabled: !!params?.id,
+  });
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center py-24">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!mudra) {
+    return (
+      <Layout>
+        <div className="p-8 text-center text-muted-foreground">Mudra not found</div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -21,11 +42,17 @@ export default function MudraDetail() {
         </Link>
 
         <div className="aspect-video w-full rounded-2xl overflow-hidden bg-muted mb-8 shadow-sm">
-          <img 
-            src={mudra.image} 
-            alt={mudra.name}
-            className="w-full h-full object-cover"
-          />
+          {mudra.image ? (
+            <img 
+              src={mudra.image} 
+              alt={mudra.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Hand className="w-24 h-24 text-muted-foreground/20" />
+            </div>
+          )}
         </div>
 
         <div className="space-y-6">
