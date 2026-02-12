@@ -54,6 +54,51 @@ export const mudras: Mudra[] = [
       "Rest the right hand on top of the left hand.",
       "Touch the tips of your thumbs together to form a triangle."
     ]
+  },
+  {
+    id: "4",
+    name: "Surya Mudra",
+    sanskritName: "Agni Mudra",
+    description: "The mudra of fire. It increases the fire element in the body and helps improve metabolism and digestion.",
+    benefits: ["Boosts metabolism", "Improves digestion", "Generates heat in the body"],
+    image: "/images/mudra-surya.png",
+    category: "energizing",
+    instructions: [
+      "Sit in a comfortable position.",
+      "Fold your ring finger down to touch the base of the thumb.",
+      "Press the thumb gently onto the ring finger's knuckle.",
+      "Keep the other fingers straight."
+    ]
+  },
+  {
+    id: "5",
+    name: "Vayu Mudra",
+    sanskritName: "Mudra of Air",
+    description: "The mudra of air. It balances the air element in the body and is helpful for relieving gas, bloating, and joint pain.",
+    benefits: ["Relieves gas and bloating", "Reduces joint pain", "Calms anxious energy"],
+    image: "/images/mudra-vayu.png",
+    category: "healing",
+    instructions: [
+      "Sit comfortably with a straight spine.",
+      "Fold your index finger to touch the base of the thumb.",
+      "Press the thumb gently over the index finger.",
+      "Keep the other three fingers straight and relaxed."
+    ]
+  },
+  {
+    id: "6",
+    name: "Prana Mudra",
+    sanskritName: "Mudra of Life",
+    description: "The mudra of life force. It activates the dormant energy in the body and boosts vitality and immunity.",
+    benefits: ["Increases vitality", "Boosts immunity", "Reduces fatigue"],
+    image: "/images/mudra-prana.png",
+    category: "energizing",
+    instructions: [
+      "Sit in a meditative pose.",
+      "Touch the tips of your ring and pinky fingers to the tip of the thumb.",
+      "Keep the index and middle fingers straight.",
+      "Rest your hands on your knees."
+    ]
   }
 ];
 
