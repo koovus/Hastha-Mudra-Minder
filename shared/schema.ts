@@ -6,7 +6,7 @@ import { z } from "zod";
 export const mudras = pgTable("mudras", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
-  sanskritName: text("sanskrit_name").notNull(),
+  sanskritName: text("sanskrit_name").default(""),
   description: text("description").notNull(),
   benefits: text("benefits").array().notNull(),
   instructions: text("instructions").array().notNull(),
