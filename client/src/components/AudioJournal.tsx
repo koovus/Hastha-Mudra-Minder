@@ -95,7 +95,7 @@ export default function AudioJournal() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/journal"] });
-      toast({ title: "Entry Saved", description: "Your journal entry has been recorded." });
+      toast({ title: "Recorded", description: "Your reflection has been saved." });
       setTitle("");
       setDuration(0);
       setAudioBlob(null);
@@ -119,7 +119,7 @@ export default function AudioJournal() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/journal"] });
-      toast({ title: "Burn Timer Set", description: "This entry will be released when the time comes." });
+      toast({ title: "Timer Set", description: "This entry will be released when the moment arrives." });
     },
   });
 
@@ -143,8 +143,8 @@ export default function AudioJournal() {
       setBurningEntry(null);
       setShowBurnRitual(false);
       toast({
-        title: "Released to the wind",
-        description: "Your words have been carried away. Let go with peace.",
+        title: "Released",
+        description: "Your words have returned to emptiness.",
       });
     }
   }, [burningEntry, burnNow, toast]);
@@ -207,7 +207,7 @@ export default function AudioJournal() {
         onComplete={handleBurnComplete}
       />
 
-      <Card className="p-8 flex flex-col items-center justify-center bg-gradient-to-b from-card to-background border-border/50">
+      <Card className="p-8 flex flex-col items-center justify-center bg-card border-border/40 shadow-none">
         {audioBlob ? (
           <div className="w-full space-y-4">
             <audio src={audioUrl!} controls className="w-full" />
@@ -273,7 +273,7 @@ export default function AudioJournal() {
       </Card>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-serif text-foreground">Recent Entries</h3>
+        <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Recent Entries</h3>
         {isLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -282,7 +282,7 @@ export default function AudioJournal() {
           activeEntries.map((entry) => (
             <div 
               key={entry.id} 
-              className="flex items-center p-4 bg-card rounded-xl border border-border/50 hover:border-primary/20 transition-colors group"
+              className="flex items-center p-3.5 bg-card rounded-lg border border-border/40 hover:border-primary/20 transition-colors group"
               data-testid={`journal-entry-${entry.id}`}
             >
               <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">

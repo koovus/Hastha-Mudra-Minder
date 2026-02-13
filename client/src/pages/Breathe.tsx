@@ -10,23 +10,23 @@ export default function Breathe() {
     <Layout>
       <div className="flex flex-col animate-in fade-in zoom-in duration-700 pb-8">
         <div className="text-center mb-4">
-          <h2 className="text-3xl font-serif mb-2">Breathe</h2>
-          <p className="text-muted-foreground text-sm">Align your energy with the universe.</p>
+          <h2 className="text-3xl font-serif mb-1 tracking-tight">Kokyu</h2>
+          <p className="text-muted-foreground text-xs tracking-[0.15em] uppercase">Breath is the bridge between body and spirit</p>
         </div>
 
         <BreathPacer pattern={selectedPattern} />
 
-        <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           {selectedPattern.phases.map((phase, i) => (
-            <div key={i} className="p-3 rounded-xl bg-card border border-border/50">
-              <span className="block text-2xl font-serif text-primary">{phase.duration}s</span>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{phase.label}</span>
+            <div key={i} className="p-3 rounded-lg bg-card border border-border/40">
+              <span className="block text-xl font-serif text-primary">{phase.duration}s</span>
+              <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">{phase.label}</span>
             </div>
           ))}
         </div>
 
         <div className="mt-8 space-y-2">
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-medium px-1">Techniques</h3>
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium px-1">Techniques</h3>
           <div className="space-y-2">
             {BREATH_PATTERNS.map((pattern) => {
               const isSelected = pattern.id === selectedPattern.id;

@@ -1,9 +1,7 @@
 import Layout from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Clock, ArrowLeft, CheckCircle2, Loader2, Hand } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, Hand } from "lucide-react";
 import type { MudraType } from "@/lib/mudras";
 
 export default function MudraDetail() {
@@ -35,11 +33,11 @@ export default function MudraDetail() {
   return (
     <Layout>
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 pb-8">
-        <Link href="/library" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back to Library
+        <Link href="/library" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground mb-6 transition-colors tracking-wide uppercase">
+            <ArrowLeft className="w-3 h-3 mr-1.5" /> Library
         </Link>
 
-        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-muted mb-8 shadow-sm">
+        <div className="aspect-[4/3] w-full rounded-lg overflow-hidden bg-muted/20 mb-6 border border-border/30">
           {mudra.image ? (
             <img 
               src={mudra.image} 
@@ -48,68 +46,66 @@ export default function MudraDetail() {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Hand className="w-24 h-24 text-muted-foreground/20" />
+              <Hand className="w-24 h-24 text-muted-foreground/15" />
             </div>
           )}
         </div>
 
         <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <Badge variant="secondary" className="bg-secondary/10 text-secondary hover:bg-secondary/20 border-none uppercase tracking-widest text-[10px]">
+          <div className="space-y-2">
+            <span className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] font-medium">
               {mudra.category}
-            </Badge>
-            <h1 className="text-4xl font-serif text-foreground">{mudra.name}</h1>
-            <p className="text-lg text-muted-foreground italic font-medium">{mudra.sanskritName}</p>
+            </span>
+            <h1 className="text-3xl font-serif text-foreground tracking-tight">{mudra.name}</h1>
+            {mudra.sanskritName && (
+              <p className="text-sm text-muted-foreground tracking-wide">{mudra.sanskritName}</p>
+            )}
           </div>
 
-          <div className="flex items-center justify-center gap-6 py-4 border-y border-border/50">
+          <div className="flex items-center gap-6 py-3 border-y border-border/30">
             <div className="text-center">
-              <span className="block text-2xl font-serif">5-15</span>
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Minutes</span>
+              <span className="block text-lg font-serif text-foreground">5-15</span>
+              <span className="text-[9px] text-muted-foreground uppercase tracking-[0.15em]">Minutes</span>
             </div>
-            <div className="w-px h-8 bg-border/50" />
+            <div className="w-px h-6 bg-border/30" />
             <div className="text-center">
-              <span className="block text-2xl font-serif">Easy</span>
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Level</span>
+              <span className="block text-lg font-serif text-foreground">Easy</span>
+              <span className="text-[9px] text-muted-foreground uppercase tracking-[0.15em]">Level</span>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-serif">Significance</h3>
-            <p className="text-muted-foreground leading-relaxed">
+          <div className="space-y-3">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">About</h3>
+            <p className="text-sm text-foreground/80 leading-relaxed">
               {mudra.description}
             </p>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-serif">How to Practice</h3>
-            <div className="space-y-4">
+          <div className="space-y-3">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Practice</h3>
+            <div className="space-y-3">
               {mudra.instructions.map((step, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                <div key={i} className="flex gap-3">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                     {i + 1}
                   </div>
-                  <p className="text-foreground/80 leading-relaxed">{step}</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed">{step}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-serif">Benefits</h3>
-            <div className="grid gap-3">
+          <div className="space-y-3">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Benefits</h3>
+            <div className="grid gap-2">
               {mudra.benefits.map((benefit, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                  <CheckCircle2 className="w-5 h-5 text-primary/60" />
-                  <span className="text-sm font-medium">{benefit}</span>
+                <div key={i} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-card border border-border/30">
+                  <CheckCircle2 className="w-4 h-4 text-primary/50 shrink-0" />
+                  <span className="text-sm">{benefit}</span>
                 </div>
               ))}
             </div>
           </div>
-
-          <Button size="lg" className="w-full mt-8 rounded-xl h-14 text-lg font-serif">
-            Start Practice Timer <Clock className="w-5 h-5 ml-2" />
-          </Button>
         </div>
       </div>
     </Layout>

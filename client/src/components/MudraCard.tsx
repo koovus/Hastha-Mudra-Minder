@@ -1,7 +1,6 @@
 import type { MudraType } from "@/lib/mudras";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Hand } from "lucide-react";
+import { Hand, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 
 interface MudraCardProps {
@@ -11,38 +10,38 @@ interface MudraCardProps {
 export default function MudraCard({ mudra }: MudraCardProps) {
   return (
     <Link href={`/mudra/${mudra.id}`}>
-      <Card className="overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer group bg-card">
-        <div className="aspect-[4/3] w-full overflow-hidden bg-muted/30 relative">
+      <Card className="overflow-hidden border border-border/40 shadow-none hover:shadow-sm transition-all duration-300 cursor-pointer group bg-card" data-testid={`card-mudra-${mudra.id}`}>
+        <div className="aspect-[4/3] w-full overflow-hidden bg-muted/20 relative">
           {mudra.image ? (
             <img 
               src={mudra.image} 
               alt={mudra.name}
-              className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out" 
+              className="w-full h-full object-cover opacity-90 group-hover:scale-[1.03] transition-transform duration-700 ease-out" 
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Hand className="w-16 h-16 text-muted-foreground/30" />
+              <Hand className="w-16 h-16 text-muted-foreground/20" />
             </div>
           )}
-          <Badge className="absolute top-3 right-3 bg-white/80 text-foreground backdrop-blur-sm hover:bg-white border-none font-normal text-xs uppercase tracking-wider">
+          <span className="absolute top-3 right-3 bg-background/80 text-foreground/70 backdrop-blur-sm text-[9px] px-2 py-1 rounded uppercase tracking-[0.15em] font-medium">
             {mudra.category}
-          </Badge>
+          </span>
         </div>
-        <CardContent className="p-5">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-serif text-foreground group-hover:text-primary transition-colors">
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center">
+            <div className="min-w-0">
+              <h3 className="text-lg font-serif text-foreground group-hover:text-primary transition-colors tracking-tight">
                 {mudra.name}
               </h3>
-              <p className="text-sm text-muted-foreground font-medium mt-1 italic">
-                {mudra.sanskritName}
-              </p>
+              {mudra.sanskritName && (
+                <p className="text-xs text-muted-foreground mt-0.5 tracking-wide">
+                  {mudra.sanskritName}
+                </p>
+              )}
             </div>
-            <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary opacity-0 group-hover:opacity-100 transition-opacity">
-              <ArrowRight className="w-4 h-4" />
-            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary/60 transition-colors shrink-0" />
           </div>
-          <p className="mt-3 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="mt-2 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
             {mudra.description}
           </p>
         </CardContent>

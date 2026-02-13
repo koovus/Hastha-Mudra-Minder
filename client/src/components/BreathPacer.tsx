@@ -13,8 +13,8 @@ export interface BreathPattern {
 export const BREATH_PATTERNS: BreathPattern[] = [
   {
     id: "box",
-    name: "Box Breathing",
-    description: "Equal rhythm. Grounding & focus.",
+    name: "Shikaku — Box",
+    description: "Four equal sides. Center your ki.",
     phases: [
       { label: "Inhale", duration: 4 },
       { label: "Hold", duration: 4 },
@@ -24,8 +24,8 @@ export const BREATH_PATTERNS: BreathPattern[] = [
   },
   {
     id: "relaxing",
-    name: "4-7-8 Breath",
-    description: "Deep calm. Eases into sleep.",
+    name: "Yasuragi — Rest",
+    description: "4-7-8 pattern. Settle into stillness.",
     phases: [
       { label: "Inhale", duration: 4 },
       { label: "Hold", duration: 7 },
@@ -34,8 +34,8 @@ export const BREATH_PATTERNS: BreathPattern[] = [
   },
   {
     id: "coherent",
-    name: "Coherent Breathing",
-    description: "Slow, steady. Heart-brain harmony.",
+    name: "Chōwa — Harmony",
+    description: "Equal breath. Unify body and mind.",
     phases: [
       { label: "Inhale", duration: 6 },
       { label: "Exhale", duration: 6 },
@@ -43,8 +43,8 @@ export const BREATH_PATTERNS: BreathPattern[] = [
   },
   {
     id: "pranayama",
-    name: "Pranayama",
-    description: "Ancient yogic ratio. Deep meditation.",
+    name: "Kokyu — Deep Breath",
+    description: "1-4-2 ratio. Master your life force.",
     phases: [
       { label: "Inhale", duration: 4 },
       { label: "Hold", duration: 16 },
@@ -53,8 +53,8 @@ export const BREATH_PATTERNS: BreathPattern[] = [
   },
   {
     id: "extended",
-    name: "Extended Exhale",
-    description: "Long exhale activates rest response.",
+    name: "Nagare — Flow",
+    description: "Extended exhale. Release all tension.",
     phases: [
       { label: "Inhale", duration: 4 },
       { label: "Hold", duration: 2 },
@@ -63,8 +63,8 @@ export const BREATH_PATTERNS: BreathPattern[] = [
   },
   {
     id: "deep-calm",
-    name: "Deep Calm",
-    description: "Very slow breath. Advanced practice.",
+    name: "Mushin — Empty Mind",
+    description: "Deep, slow cycle. Advanced practice.",
     phases: [
       { label: "Inhale", duration: 8 },
       { label: "Hold", duration: 4 },

@@ -13,8 +13,8 @@ export default function Library() {
     <Layout>
       <div className="space-y-6 animate-in fade-in duration-500">
         <div>
-          <h2 className="text-3xl font-serif mb-2">Library</h2>
-          <p className="text-muted-foreground">Explore the ancient gestures.</p>
+          <h2 className="text-3xl font-serif mb-1 tracking-tight">Library</h2>
+          <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase">The forms of the hand</p>
         </div>
 
         {isLoading ? (

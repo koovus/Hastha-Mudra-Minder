@@ -151,7 +151,7 @@ export default function BurnRitual({ isVisible, entryTitle, onComplete }: BurnRi
             )}
 
             <div className="text-center relative z-10">
-              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Releasing</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mb-2">Letting go</p>
               <p className="font-serif text-lg text-foreground/80">{entryTitle}</p>
             </div>
           </motion.div>
@@ -169,9 +169,9 @@ export default function BurnRitual({ isVisible, entryTitle, onComplete }: BurnRi
             transition={{ duration: 0.5 }}
           >
             {phase === "igniting" && "Igniting..."}
-            {phase === "burning" && "Releasing to flame..."}
-            {phase === "ashes" && "Returning to ash..."}
-            {phase === "wind" && "Carried by the wind..."}
+            {phase === "burning" && "Returning to emptiness..."}
+            {phase === "ashes" && "Becoming ash..."}
+            {phase === "wind" && "Released to the wind..."}
           </motion.p>
         </AnimatePresence>
       </motion.div>
