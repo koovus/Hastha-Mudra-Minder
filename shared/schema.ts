@@ -22,6 +22,8 @@ export const journalEntries = pgTable("journal_entries", {
   audioUrl: text("audio_url"),
   duration: text("duration").notNull(),
   mood: text("mood"),
+  burnAt: timestamp("burn_at"),
+  burnedAt: timestamp("burned_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -34,6 +36,7 @@ export const insertMudraSchema = createInsertSchema(mudras).omit({
 export const insertJournalSchema = createInsertSchema(journalEntries).omit({
   id: true,
   createdAt: true,
+  burnedAt: true,
 });
 
 export type InsertMudra = z.infer<typeof insertMudraSchema>;

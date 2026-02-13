@@ -55,6 +55,19 @@ export async function registerRoutes(
     res.status(204).send();
   });
 
+  app.post("/api/journal/:id/burn", async (req, res) => {
+    await storage.burnEntry(req.params.id);
+    res.json({ message: "Entry burned and released" });
+  });
+
+  app.post("/api/journal/:id/burn-timer", async (req, res) => {
+    const { burnAt } = req.body;
+    if (!burnAt) return res.status(400).json({ message: "burnAt is required" });
+    const entry = await storage.setBurnTimer(req.params.id, new Date(burnAt));
+    if (!entry) return res.status(404).json({ message: "Entry not found" });
+    res.json(entry);
+  });
+
   // --- Seed built-in mudras ---
   app.post("/api/seed", async (_req, res) => {
     const existing = await storage.getMudras();

@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, lte, isNull, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 import {
@@ -20,6 +20,9 @@ export interface IStorage {
   getJournalEntry(id: string): Promise<JournalEntry | undefined>;
   createJournalEntry(entry: InsertJournal): Promise<JournalEntry>;
   deleteJournalEntry(id: string): Promise<void>;
+  setBurnTimer(id: string, burnAt: Date): Promise<JournalEntry | undefined>;
+  burnEntry(id: string): Promise<void>;
+  burnExpiredEntries(): Promise<number>;
 }
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
@@ -60,6 +63,44 @@ export class DatabaseStorage implements IStorage {
 
   async deleteJournalEntry(id: string): Promise<void> {
     await db.delete(journalEntries).where(eq(journalEntries.id, id));
+  }
+
+  async setBurnTimer(id: string, burnAt: Date): Promise<JournalEntry | undefined> {
+    const [updated] = await db
+      .update(journalEntries)
+      .set({ burnAt })
+      .where(eq(journalEntries.id, id))
+      .returning();
+    return updated;
+  }
+
+  async burnEntry(id: string): Promise<void> {
+    await db
+      .update(journalEntries)
+      .set({ burnedAt: new Date() })
+      .where(eq(journalEntries.id, id));
+  }
+
+  async burnExpiredEntries(): Promise<number> {
+    const now = new Date();
+    const expired = await db
+      .select()
+      .from(journalEntries)
+      .where(
+        and(
+          lte(journalEntries.burnAt, now),
+          isNull(journalEntries.burnedAt)
+        )
+      );
+    
+    for (const entry of expired) {
+      await db
+        .update(journalEntries)
+        .set({ burnedAt: now })
+        .where(eq(journalEntries.id, entry.id));
+    }
+    
+    return expired.length;
   }
 }
 

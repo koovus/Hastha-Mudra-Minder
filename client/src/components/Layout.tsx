@@ -30,14 +30,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {navItems.map((item) => {
             const isActive = location === item.href;
             return (
-              <Link key={item.href} href={item.href}>
-                <a className={cn(
+              <Link key={item.href} href={item.href} className={cn(
                   "flex flex-col items-center justify-center gap-1 transition-colors duration-300 w-12",
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 )}>
                   <item.icon className={cn("w-6 h-6", isActive && "fill-current/20")} strokeWidth={isActive ? 2 : 1.5} />
                   <span className="text-[10px] font-medium tracking-wide">{item.label}</span>
-                </a>
               </Link>
             );
           })}

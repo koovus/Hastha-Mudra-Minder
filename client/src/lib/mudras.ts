@@ -19,5 +19,7 @@ export interface JournalEntryType {
   audioUrl: string | null;
   duration: string;
   mood: string | null;
+  burnAt: string | null;
+  burnedAt: string | null;
   createdAt: string;
 }

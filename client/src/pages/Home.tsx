@@ -42,8 +42,7 @@ export default function Home() {
         </section>
 
         <section className="grid grid-cols-2 gap-4">
-          <Link href="/breathe">
-            <a className="bg-primary/5 hover:bg-primary/10 transition-colors p-6 rounded-2xl flex flex-col items-center text-center gap-3 border border-primary/10">
+          <Link href="/breathe" className="bg-primary/5 hover:bg-primary/10 transition-colors p-6 rounded-2xl flex flex-col items-center text-center gap-3 border border-primary/10">
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9.5 9.4c1.1 1.1 3 1.1 4.2 0 1.2-1.2 1.2-3.1 0-4.2C12.5 4 10.6 4 9.5 5.2c-1.1 1.1-1.1 3-1.1 3s1.9 0 3 .1c1.2.1 3.1 0 4.2-1.1" />
@@ -54,11 +53,9 @@ export default function Home() {
                 <span className="block font-medium text-foreground">Breathe</span>
                 <span className="text-xs text-muted-foreground">3 min session</span>
               </div>
-            </a>
           </Link>
           
-          <Link href="/journal">
-            <a className="bg-secondary/5 hover:bg-secondary/10 transition-colors p-6 rounded-2xl flex flex-col items-center text-center gap-3 border border-secondary/10">
+          <Link href="/journal" className="bg-secondary/5 hover:bg-secondary/10 transition-colors p-6 rounded-2xl flex flex-col items-center text-center gap-3 border border-secondary/10">
               <div className="w-10 h-10 rounded-full bg-secondary/10 text-secondary flex items-center justify-center">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 20h9" />
@@ -69,7 +66,6 @@ export default function Home() {
                 <span className="block font-medium text-foreground">Reflect</span>
                 <span className="text-xs text-muted-foreground">Log entry</span>
               </div>
-            </a>
           </Link>
         </section>
 
