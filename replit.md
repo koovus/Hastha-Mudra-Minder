@@ -18,7 +18,8 @@ Preferred communication style: Simple, everyday language.
 - **State/Data Fetching**: TanStack React Query for server state management
 - **Styling**: Tailwind CSS v4 with CSS variables for theming, using a warm paper-like color palette with sage green accents
 - **UI Components**: shadcn/ui (new-york style) built on Radix UI primitives
-- **Animations**: Framer Motion (used in BreathPacer component)
+- **Hand Detection**: MediaPipe Tasks Vision (`@mediapipe/tasks-vision`) for browser-based hand landmark detection, used in Studio to generate stylized mudra illustrations from photos
+- **Animations**: Framer Motion (used in BreathPacer component, BurnRitual component)
 - **Typography**: Cormorant Garamond (serif, headings) + Plus Jakarta Sans (sans, body)
 - **Build Tool**: Vite
 
