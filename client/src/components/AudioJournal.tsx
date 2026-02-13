@@ -244,11 +244,11 @@ export default function AudioJournal() {
           <>
             <div className="relative mb-8">
               {isRecording && (
-                <div className="absolute inset-0 bg-destructive/20 rounded-full animate-ping" />
+                <div className="absolute inset-0 bg-destructive/20 rounded-full animate-ping pointer-events-none" />
               )}
               <Button
                 size="lg"
-                className={`w-20 h-20 rounded-full shadow-lg transition-all duration-500 ${
+                className={`relative z-10 w-20 h-20 rounded-full shadow-lg transition-all duration-500 ${
                   isRecording 
                     ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" 
                     : "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
