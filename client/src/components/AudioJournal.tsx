@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Mic, Square, Play, Trash2, Loader2, Flame, Clock, Wind } from "lucide-react";
+import { Mic, Square, Play, Pause, RotateCcw, Trash2, Loader2, Flame, Clock, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,8 +19,17 @@ import type { JournalEntryType } from "@/lib/mudras";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const s = Math.floor(seconds % 60);
   return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }
 
 function BurnCountdown({ burnAt }: { burnAt: string }) {
@@ -63,6 +72,118 @@ function BurnCountdown({ burnAt }: { burnAt: string }) {
   );
 }
 
+function EntryPlayer({ entry }: { entry: JournalEntryType }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  const hasAudio = !!entry.audioUrl;
+
+  useEffect(() => {
+    if (!hasAudio) return;
+    const audio = new Audio(entry.audioUrl!);
+    audioRef.current = audio;
+
+    audio.addEventListener("loadedmetadata", () => {
+      setAudioDuration(audio.duration);
+    });
+    audio.addEventListener("timeupdate", () => {
+      setCurrentTime(audio.currentTime);
+    });
+    audio.addEventListener("ended", () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    });
+
+    return () => {
+      audio.pause();
+      audio.src = "";
+    };
+  }, [entry.audioUrl, hasAudio]);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const restart = () => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = 0;
+    setCurrentTime(0);
+    if (!isPlaying) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !progressRef.current || audioDuration === 0) return;
+    const rect = progressRef.current.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    const newTime = ratio * audioDuration;
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const progress = audioDuration > 0 ? (currentTime / audioDuration) * 100 : 0;
+
+  if (!hasAudio) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center text-muted-foreground shrink-0">
+          <Mic className="w-3.5 h-3.5" />
+        </div>
+        <span className="text-xs text-muted-foreground italic">No audio</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 w-full">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-8 h-8 shrink-0 text-primary hover:text-primary/80"
+        onClick={togglePlay}
+        data-testid={`button-play-${entry.id}`}
+      >
+        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-8 h-8 shrink-0 text-muted-foreground hover:text-foreground"
+        onClick={restart}
+        data-testid={`button-restart-${entry.id}`}
+      >
+        <RotateCcw className="w-3.5 h-3.5" />
+      </Button>
+      <div
+        ref={progressRef}
+        className="flex-1 h-1.5 bg-border/60 rounded-full cursor-pointer relative overflow-hidden"
+        onClick={handleProgressClick}
+        data-testid={`progress-bar-${entry.id}`}
+      >
+        <div
+          className="absolute inset-y-0 left-0 bg-primary/70 rounded-full transition-[width] duration-100"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      <span className="text-[10px] text-muted-foreground tabular-nums shrink-0 w-10 text-right">
+        {isPlaying || currentTime > 0 ? formatDuration(currentTime) : formatDuration(audioDuration || 0)}
+      </span>
+    </div>
+  );
+}
+
 export default function AudioJournal() {
   const { toast } = useToast();
   const [isRecording, setIsRecording] = useState(false);
@@ -84,11 +205,15 @@ export default function AudioJournal() {
 
   const saveEntry = useMutation({
     mutationFn: async () => {
+      let audioDataUrl: string | null = null;
+      if (audioBlob) {
+        audioDataUrl = await blobToBase64(audioBlob);
+      }
       const res = await apiRequest("POST", "/api/journal", {
         title: title || "Untitled Entry",
         duration: formatDuration(duration),
         mood: null,
-        audioUrl: null,
+        audioUrl: audioDataUrl,
         burnAt: null,
       });
       return res.json();
@@ -282,89 +407,90 @@ export default function AudioJournal() {
           activeEntries.map((entry) => (
             <div 
               key={entry.id} 
-              className="flex items-center p-3.5 bg-card rounded-lg border border-border/40 hover:border-primary/20 transition-colors group"
+              className="p-3.5 bg-card rounded-lg border border-border/40 hover:border-primary/20 transition-colors group"
               data-testid={`journal-entry-${entry.id}`}
             >
-              <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                <Play className="w-4 h-4 ml-0.5" />
-              </div>
-              <div className="ml-4 flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-foreground truncate">{entry.title}</h4>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(entry.createdAt).toLocaleDateString()}
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-border" />
-                  <span className="text-xs text-muted-foreground">{entry.duration}</span>
-                  {entry.burnAt && !entry.burnedAt && (
-                    <>
-                      <span className="w-1 h-1 rounded-full bg-border" />
-                      <BurnCountdown burnAt={entry.burnAt} />
-                    </>
-                  )}
+              <div className="flex items-center justify-between mb-2">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-medium text-foreground truncate">{entry.title}</h4>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(entry.createdAt).toLocaleDateString()}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-border" />
+                    <span className="text-xs text-muted-foreground">{entry.duration}</span>
+                    {entry.burnAt && !entry.burnedAt && (
+                      <>
+                        <span className="w-1 h-1 rounded-full bg-border" />
+                        <BurnCountdown burnAt={entry.burnAt} />
+                      </>
+                    )}
+                  </div>
                 </div>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="text-orange-500/70 hover:text-orange-500 hover:bg-orange-500/10 shrink-0"
+                      data-testid={`button-burn-menu-${entry.id}`}
+                    >
+                      <Flame className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel className="text-xs font-normal text-muted-foreground uppercase tracking-wider">
+                      Release this entry
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      className="text-orange-600 focus:text-orange-700 focus:bg-orange-50 cursor-pointer"
+                      onClick={() => handleBurnNow(entry)}
+                      data-testid={`button-burn-now-${entry.id}`}
+                    >
+                      <Flame className="w-4 h-4 mr-2" />
+                      Burn Now
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel className="text-xs font-normal text-muted-foreground uppercase tracking-wider">
+                      Set a burn timer
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem 
+                      className="cursor-pointer"
+                      onClick={() => handleSetBurnTimer(entry.id, 1)}
+                    >
+                      <Clock className="w-4 h-4 mr-2" />
+                      In 1 hour
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="cursor-pointer"
+                      onClick={() => handleSetBurnTimer(entry.id, 24)}
+                    >
+                      <Clock className="w-4 h-4 mr-2" />
+                      In 1 day
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="cursor-pointer"
+                      onClick={() => handleSetBurnTimer(entry.id, 24 * 7)}
+                    >
+                      <Wind className="w-4 h-4 mr-2" />
+                      In 1 week
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      className="text-destructive focus:text-destructive cursor-pointer"
+                      onClick={() => deleteEntry.mutate(entry.id)}
+                      data-testid={`button-delete-journal-${entry.id}`}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete permanently
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-orange-500/70 hover:text-orange-500 hover:bg-orange-500/10 shrink-0"
-                    data-testid={`button-burn-menu-${entry.id}`}
-                  >
-                    <Flame className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel className="text-xs font-normal text-muted-foreground uppercase tracking-wider">
-                    Release this entry
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="text-orange-600 focus:text-orange-700 focus:bg-orange-50 cursor-pointer"
-                    onClick={() => handleBurnNow(entry)}
-                    data-testid={`button-burn-now-${entry.id}`}
-                  >
-                    <Flame className="w-4 h-4 mr-2" />
-                    Burn Now
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel className="text-xs font-normal text-muted-foreground uppercase tracking-wider">
-                    Set a burn timer
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem 
-                    className="cursor-pointer"
-                    onClick={() => handleSetBurnTimer(entry.id, 1)}
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    In 1 hour
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="cursor-pointer"
-                    onClick={() => handleSetBurnTimer(entry.id, 24)}
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    In 1 day
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="cursor-pointer"
-                    onClick={() => handleSetBurnTimer(entry.id, 24 * 7)}
-                  >
-                    <Wind className="w-4 h-4 mr-2" />
-                    In 1 week
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="text-destructive focus:text-destructive cursor-pointer"
-                    onClick={() => deleteEntry.mutate(entry.id)}
-                    data-testid={`button-delete-journal-${entry.id}`}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete permanently
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <EntryPlayer entry={entry} />
             </div>
           ))
         ) : (
