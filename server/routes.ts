@@ -37,6 +37,7 @@ export async function registerRoutes(
 
   // --- Journal Entries ---
   app.get("/api/journal", async (_req, res) => {
+    await storage.burnExpiredEntries();
     const entries = await storage.getJournalEntries();
     res.json(entries);
   });
@@ -56,6 +57,8 @@ export async function registerRoutes(
   });
 
   app.post("/api/journal/:id/burn", async (req, res) => {
+    const entry = await storage.getJournalEntry(req.params.id);
+    if (!entry) return res.status(404).json({ message: "Entry not found" });
     await storage.burnEntry(req.params.id);
     res.json({ message: "Entry burned and released" });
   });
