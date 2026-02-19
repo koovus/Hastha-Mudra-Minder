@@ -38,7 +38,7 @@ export default function Home() {
           ) : null}
         </section>
 
-        <section className="grid grid-cols-3 gap-3">
+        <section className="grid grid-cols-2 gap-3">
           <Link href="/angel-cards" className="group bg-card hover:bg-primary/5 transition-all duration-300 p-5 rounded-lg flex flex-col items-center text-center gap-3 border border-border/50 hover:border-primary/20" data-testid="link-angel-cards">
               <div className="w-10 h-10 rounded-full bg-primary/8 text-primary flex items-center justify-center">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -48,6 +48,23 @@ export default function Home() {
               <div>
                 <span className="block text-sm font-medium text-foreground">Cards</span>
                 <span className="text-[10px] text-muted-foreground tracking-wide">Guidance</span>
+              </div>
+          </Link>
+
+          <Link href="/dice" className="group bg-card hover:bg-primary/5 transition-all duration-300 p-5 rounded-lg flex flex-col items-center text-center gap-3 border border-border/50 hover:border-primary/20" data-testid="link-dice">
+              <div className="w-10 h-10 rounded-full bg-primary/8 text-primary flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="2" width="20" height="20" rx="3" />
+                  <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+                  <circle cx="16" cy="8" r="1.5" fill="currentColor" />
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                  <circle cx="8" cy="16" r="1.5" fill="currentColor" />
+                  <circle cx="16" cy="16" r="1.5" fill="currentColor" />
+                </svg>
+              </div>
+              <div>
+                <span className="block text-sm font-medium text-foreground">D30</span>
+                <span className="text-[10px] text-muted-foreground tracking-wide">Sacred Chance</span>
               </div>
           </Link>
 

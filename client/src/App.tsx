@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import Journal from "@/pages/Journal";
 import Breathe from "@/pages/Breathe";
 import AngelCards from "@/pages/AngelCards";
+import Dice from "@/pages/Dice";
 import MudraDetail from "@/pages/MudraDetail";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/angel-cards" component={AngelCards} />
+      <Route path="/dice" component={Dice} />
       <Route path="/journal" component={Journal} />
       <Route path="/breathe" component={Breathe} />
       <Route path="/mudra/:id" component={MudraDetail} />
