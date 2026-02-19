@@ -15,6 +15,13 @@ export async function registerRoutes(
     res.json(mudras);
   });
 
+  app.get("/api/mudras/random", async (_req, res) => {
+    const mudras = await storage.getMudras();
+    if (mudras.length === 0) return res.status(404).json({ message: "No mudras found" });
+    const random = mudras[Math.floor(Math.random() * mudras.length)];
+    res.json(random);
+  });
+
   app.get("/api/mudras/:id", async (req, res) => {
     const mudra = await storage.getMudra(req.params.id);
     if (!mudra) return res.status(404).json({ message: "Mudra not found" });
@@ -74,8 +81,18 @@ export async function registerRoutes(
   // --- Seed built-in mudras ---
   app.post("/api/seed", async (_req, res) => {
     const existing = await storage.getMudras();
-    const existingNames = new Set(existing.map(m => m.name));
     const builtInMudras = getBuiltInMudras();
+    const builtInNames = new Set(builtInMudras.map(m => m.name));
+    const existingNames = new Set(existing.map(m => m.name));
+
+    let removed = 0;
+    for (const m of existing) {
+      if (!builtInNames.has(m.name)) {
+        await storage.deleteMudra(m.id);
+        removed++;
+      }
+    }
+
     let added = 0;
     for (const m of builtInMudras) {
       if (!existingNames.has(m.name)) {
@@ -83,7 +100,7 @@ export async function registerRoutes(
         added++;
       }
     }
-    res.json({ message: added > 0 ? `Added ${added} new mudras` : "All mudras present", count: existing.length + added });
+    res.json({ message: `Added ${added}, removed ${removed}`, count: builtInMudras.length });
   });
 
   return httpServer;
@@ -199,104 +216,5 @@ function getBuiltInMudras() {
       category: "spiritual",
       instructions: ["Raise your right hand to shoulder height.", "Bend the arm at the elbow.", "Face the palm outward with fingers upright and joined.", "The left hand can rest by your side or in another mudra."]
     },
-    {
-      name: "Budhi Mudra",
-      sanskritName: "Seal of Mental Clarity",
-      description: "A gesture that opens the channel of communication and intuition. The thumb meets the ring finger, creating a circuit that sharpens inner dialogue and helps you trust the quiet voice within.",
-      benefits: ["Enhances intuition", "Improves communication", "Clears mental fog"],
-      image: "/images/mudra-budhi.png",
-      category: "spiritual",
-      instructions: ["Hold one hand upright with the palm facing forward.", "Touch the tip of the thumb to the tip of the ring finger.", "Keep the index and middle fingers extended gently upward.", "Hold for 5-15 minutes during seated meditation."]
-    },
-    {
-      name: "Kshepana Mudra",
-      sanskritName: "Gesture of Pouring Out",
-      description: "A powerful release gesture where both hands interlock and point upward like a vessel tipping over. It helps drain away stagnant energy and negative emotions, making room for renewal.",
-      benefits: ["Releases negative energy", "Promotes emotional cleansing", "Encourages letting go"],
-      image: "/images/mudra-kshepana.png",
-      category: "calming",
-      instructions: ["Interlace the fingers of both hands.", "Extend both index fingers upward, pressing them together.", "Cross the thumbs, one over the other.", "Hold at heart level and breathe deeply for 2-3 minutes."]
-    },
-    {
-      name: "Karana Mudra",
-      sanskritName: "Gesture of Warding Off",
-      description: "An ancient protective seal used to banish obstacles and dispel heaviness from the mind. The tucked finger creates a shield while the extended fingers channel clarity forward.",
-      benefits: ["Removes obstacles", "Protects against negativity", "Strengthens resolve"],
-      image: "/images/mudra-karana.png",
-      category: "energizing",
-      instructions: ["Extend the hand with the palm facing outward.", "Fold the pinky finger inward to touch the thumb.", "Keep the index, middle, and ring fingers extended.", "Hold the gesture at shoulder height during practice."]
-    },
-    {
-      name: "Atmanjali Mudra",
-      sanskritName: "Seal of the Inner Self",
-      description: "A deeper variation of the prayer gesture, where the fingers press firmly together to create a single unified column of energy. It draws awareness inward, connecting you to the still center within.",
-      benefits: ["Deepens self-awareness", "Centers scattered thoughts", "Cultivates inner stillness"],
-      image: "/images/mudra-atmanjali.png",
-      category: "calming",
-      instructions: ["Press the palms and all fingers firmly together.", "Align the fingers so they point straight upward.", "Bring the joined hands to the center of the chest.", "Close your eyes and focus on the warmth between your palms."]
-    },
-    {
-      name: "Steeple Mudra",
-      sanskritName: "Shikhara Anjali",
-      description: "The tall prayer gesture forms a tower reaching upward, symbolizing aspiration and connection between earth and sky. The elongated form draws energy upward along the spine, lifting both posture and spirit.",
-      benefits: ["Elevates mood", "Improves posture awareness", "Strengthens willpower"],
-      image: "/images/mudra-steeple.png",
-      category: "spiritual",
-      instructions: ["Press your palms together with fingers fully extended.", "Raise the joined hands so fingertips point directly upward.", "Keep a slight space between the heels of the palms.", "Breathe slowly, imagining energy rising from the base of the spine."]
-    },
-    {
-      name: "Jnana Mudra",
-      sanskritName: "Seal of Wisdom",
-      description: "The hand rests open like a bowl receiving water, with the thumb and forefinger meeting in a soft circle. This ancient gesture of the teacher signifies that true wisdom arrives not through grasping, but through quiet receptivity.",
-      benefits: ["Cultivates receptivity", "Calms the nervous system", "Invites insight"],
-      image: "/images/mudra-jnana.png",
-      category: "calming",
-      instructions: ["Let one hand rest naturally at your side, palm facing up.", "Gently touch the tip of the thumb to the tip of the index finger.", "Allow the remaining fingers to curl softly inward.", "Hold with relaxed shoulders and slow, easy breathing."]
-    },
-    {
-      name: "Prithvi Mudra",
-      sanskritName: "Seal of the Earth",
-      description: "A grounding gesture that connects the body's fire and earth elements. The ring and pinky fingers fold inward to meet the thumb, anchoring restless energy and building steady, patient strength from the ground up.",
-      benefits: ["Grounds scattered energy", "Builds physical endurance", "Promotes stability"],
-      image: "/images/mudra-prithvi.png",
-      category: "energizing",
-      instructions: ["Hold the hand upright with the palm facing forward.", "Curl the ring and pinky fingers inward to touch the thumb tip.", "Keep the index and middle fingers extended.", "Practice for 10-30 minutes, ideally in the morning."]
-    },
-    {
-      name: "Akash Mudra",
-      sanskritName: "Seal of Space",
-      description: "A gesture that expands the space element within, creating openness in the chest, throat, and mind. The relaxed hand and touching fingers invite a feeling of boundlessness, like gazing into a clear sky.",
-      benefits: ["Opens the heart center", "Relieves heaviness in the chest", "Expands awareness"],
-      image: "/images/mudra-akash.png",
-      category: "calming",
-      instructions: ["Let the hand rest palm upward, relaxed and open.", "Touch the tip of the middle finger to the tip of the thumb.", "Allow the other fingers to remain softly extended.", "Breathe into the space behind the sternum."]
-    },
-    {
-      name: "Kalesvara Mudra",
-      sanskritName: "Seal of the Lord of Time",
-      description: "Both hands join with thumbs crossed and fingers interlaced, forming a gateway that slows the rush of thought. Named after the deity who governs time, this mudra helps you step outside the current of urgency and into calm presence.",
-      benefits: ["Quiets racing thoughts", "Cultivates patience", "Sharpens focus"],
-      image: "/images/mudra-kalesvara.png",
-      category: "spiritual",
-      instructions: ["Interlace all fingers of both hands.", "Cross the thumbs, one resting over the other.", "Point the joined fingers upward.", "Gaze softly at the hands and count ten slow breaths."]
-    },
-    {
-      name: "Uttarabodhi Mudra",
-      sanskritName: "Seal of Supreme Enlightenment",
-      description: "The open hand with all fingers spread wide is a gesture of total openness and fearless receiving. It represents the moment of awakening — nothing hidden, nothing held back, fully present to what is.",
-      benefits: ["Dissolves fear", "Promotes fearless openness", "Energizes the whole body"],
-      image: "/images/mudra-uttarabodhi.png",
-      category: "energizing",
-      instructions: ["Raise one hand with the palm facing outward.", "Spread all five fingers wide apart.", "Feel the stretch between each finger.", "Hold for several breaths, imagining light radiating from the palm."]
-    },
-    {
-      name: "Vitarka Mudra",
-      sanskritName: "Gesture of Discussion",
-      description: "The teaching gesture of the Buddha — thumb and index finger form a circle of endless truth while the remaining fingers curl inward, holding knowledge close. It is the mudra of sharing wisdom without force, of offering understanding as a gift.",
-      benefits: ["Enhances eloquence", "Promotes thoughtful speech", "Deepens understanding"],
-      image: "/images/mudra-vitarka.png",
-      category: "spiritual",
-      instructions: ["Hold one hand at chest level.", "Touch the tip of the index finger to the tip of the thumb, forming a circle.", "Let the other three fingers curl naturally inward.", "Keep the wrist relaxed and the shoulder dropped."]
-    }
   ];
 }

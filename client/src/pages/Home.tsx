@@ -6,11 +6,11 @@ import { Loader2 } from "lucide-react";
 import type { MudraType } from "@/lib/mudras";
 
 export default function Home() {
-  const { data: mudras, isLoading } = useQuery<MudraType[]>({
-    queryKey: ["/api/mudras"],
+  const { data: mudra, isLoading } = useQuery<MudraType>({
+    queryKey: ["/api/mudras/random"],
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
-
-  const featuredMudra = mudras?.[0];
 
   return (
     <Layout>
@@ -33,8 +33,8 @@ export default function Home() {
             <div className="flex justify-center py-12">
               <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
             </div>
-          ) : featuredMudra ? (
-            <MudraCard mudra={featuredMudra} />
+          ) : mudra ? (
+            <MudraCard mudra={mudra} />
           ) : null}
         </section>
 

@@ -4,8 +4,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
-import Library from "@/pages/Library";
-
 import Journal from "@/pages/Journal";
 import Breathe from "@/pages/Breathe";
 import MudraDetail from "@/pages/MudraDetail";
@@ -14,8 +12,6 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/library" component={Library} />
-
       <Route path="/journal" component={Journal} />
       <Route path="/breathe" component={Breathe} />
       <Route path="/mudra/:id" component={MudraDetail} />
