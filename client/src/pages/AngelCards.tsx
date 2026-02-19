@@ -152,6 +152,29 @@ export default function AngelCards() {
           </p>
         </div>
 
+        <AnimatePresence mode="wait">
+          {showDrawn && currentDraw && (
+            <motion.div
+              key={currentDraw.id}
+              initial={justDrawn ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.6, delay: justDrawn ? 0.3 : 0 }}
+              onAnimationComplete={() => setJustDrawn(false)}
+            >
+              <DrawnCard draw={currentDraw} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!isLoading && !currentDraw && !shuffling && !drawCard.isPending && (
+          <div className="text-center py-4">
+            <p className="text-xs text-muted-foreground italic">
+              No card drawn yet. Shuffle the deck to receive your guidance.
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-col items-center gap-8">
           <div className="relative" style={{ width: "180px", height: "260px" }}>
             {Array.from({ length: deckCards }).map((_, i) => (
@@ -184,29 +207,6 @@ export default function AngelCards() {
             )}
           </Button>
         </div>
-
-        <AnimatePresence mode="wait">
-          {showDrawn && currentDraw && (
-            <motion.div
-              key={currentDraw.id}
-              initial={justDrawn ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6, delay: justDrawn ? 0.3 : 0 }}
-              onAnimationComplete={() => setJustDrawn(false)}
-            >
-              <DrawnCard draw={currentDraw} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {!isLoading && !currentDraw && !shuffling && !drawCard.isPending && (
-          <div className="text-center py-4">
-            <p className="text-xs text-muted-foreground italic">
-              No card drawn yet. Shuffle the deck to receive your guidance.
-            </p>
-          </div>
-        )}
       </div>
     </Layout>
   );
