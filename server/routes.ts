@@ -119,8 +119,18 @@ export async function registerRoutes(
       }
     }
     const existingCards = await storage.getAngelCards();
-    const existingCardNames = new Set(existingCards.map(c => c.name));
     const builtInCards = getBuiltInAngelCards();
+    const builtInCardNames = new Set(builtInCards.map(c => c.name));
+    const existingCardNames = new Set(existingCards.map(c => c.name));
+
+    let cardsRemoved = 0;
+    for (const c of existingCards) {
+      if (!builtInCardNames.has(c.name)) {
+        await storage.deleteAngelCard(c.id);
+        cardsRemoved++;
+      }
+    }
+
     let cardsAdded = 0;
     for (const c of builtInCards) {
       if (!existingCardNames.has(c.name)) {
@@ -129,7 +139,7 @@ export async function registerRoutes(
       }
     }
 
-    res.json({ message: `Mudras: added ${added}, removed ${removed}. Angel cards: added ${cardsAdded}`, mudraCount: builtInMudras.length, cardCount: existingCards.length + cardsAdded });
+    res.json({ message: `Mudras: +${added}/-${removed}. Cards: +${cardsAdded}/-${cardsRemoved}`, mudraCount: builtInMudras.length, cardCount: builtInCards.length });
   });
 
   return httpServer;
@@ -137,28 +147,28 @@ export async function registerRoutes(
 
 function getBuiltInAngelCards() {
   return [
-    { name: "Grace", message: "Allow grace to flow through you. You are held in ways you cannot see.", meaning: "A reminder that unseen forces support you. Surrender the need to control and let life carry you forward with trust." },
-    { name: "Courage", message: "The strength you seek already lives within you. Step forward.", meaning: "You have faced difficulty before and emerged. This card calls you to act from your inner fire, not from fear." },
-    { name: "Patience", message: "What is meant for you will not pass you by. Trust the timing.", meaning: "Not everything blooms in the same season. This card asks you to release urgency and honor the natural rhythm of unfolding." },
-    { name: "Healing", message: "Your wounds are becoming your wisdom. Let the light in through the cracks.", meaning: "Pain that has been acknowledged transforms into understanding. This card signals a season of mending, body and spirit." },
-    { name: "Abundance", message: "Open your hands to receive. The universe gives generously to those who are ready.", meaning: "Abundance is not only material — it is love, time, creativity, and connection. Notice what is already overflowing in your life." },
-    { name: "Trust", message: "Even when you cannot see the path, the ground beneath you is solid.", meaning: "Doubt clouds vision but does not change reality. This card encourages you to keep walking, even in the dark." },
-    { name: "Joy", message: "Happiness is not something to chase. It is something to allow.", meaning: "Joy arrives when resistance softens. Let go of the belief that you must earn delight — it is your birthright." },
-    { name: "Release", message: "What you cling to, clings to you. Let it go and find yourself lighter.", meaning: "Holding on to what no longer serves you drains your energy. This card is permission to set down the weight." },
-    { name: "Clarity", message: "The fog is lifting. Soon you will see clearly what has always been true.", meaning: "Confusion is temporary. Be still, and the answers you seek will surface on their own." },
-    { name: "Protection", message: "You are surrounded by light. Nothing harmful can reach the center of who you are.", meaning: "This card reassures you that your essence is untouchable. External storms cannot disturb your deepest self." },
-    { name: "Forgiveness", message: "Forgiveness is not a gift to others. It is freedom for yourself.", meaning: "Carrying resentment binds you to the past. This card invites you to release, not for them, but for your own peace." },
-    { name: "Transformation", message: "You are not falling apart. You are falling into a new form.", meaning: "Change can feel like loss, but it is often rebirth. Trust the process of becoming who you are meant to be." },
-    { name: "Stillness", message: "In the quiet space between breaths, all answers rest.", meaning: "The world is loud, but wisdom speaks softly. This card invites you to stop doing and simply be." },
-    { name: "Connection", message: "You are never truly alone. Invisible threads bind you to all living things.", meaning: "Loneliness is an illusion of separation. This card reminds you that love is the fabric of existence." },
-    { name: "Purpose", message: "You are here for a reason. Even the smallest act carries meaning.", meaning: "Purpose is not one grand mission — it is the love you bring to ordinary moments. You are already fulfilling it." },
-    { name: "Gratitude", message: "The door to abundance opens with the key of thankfulness.", meaning: "When you honor what you have, more arrives. This card asks you to pause and count the blessings hiding in plain sight." },
-    { name: "Surrender", message: "Stop swimming against the current. Turn around and let the river carry you.", meaning: "Effort has its place, but so does yielding. This card signals it is time to trust a larger plan." },
-    { name: "Hope", message: "Even the longest night eventually gives way to dawn.", meaning: "No matter how dark the present feels, light is approaching. Hold on — the sunrise is closer than you think." },
-    { name: "Compassion", message: "Be gentle with yourself first. You cannot pour from an empty vessel.", meaning: "Self-compassion is not selfishness — it is the foundation of all kindness. Fill your own cup before serving others." },
-    { name: "Wisdom", message: "The answers are not above you. They are within you, waiting quietly.", meaning: "You already know more than you realize. This card encourages you to listen inward before seeking outward." },
-    { name: "Faith", message: "Believe in what you cannot yet see. The seed trusts the soil.", meaning: "Faith is action taken before proof arrives. Plant your intentions and trust the invisible process of growth." },
-    { name: "Harmony", message: "When you align with your true nature, everything else falls into place.", meaning: "Struggle often comes from living out of alignment. This card invites you to return to what feels authentic and whole." },
+    { name: "111", message: "Your thoughts are manifesting rapidly. Focus on what you truly desire.", meaning: "A powerful alignment signal. The universe is mirroring your thoughts back to you — choose them wisely, because seeds planted now grow fast." },
+    { name: "222", message: "Trust the process. Everything is unfolding in perfect divine timing.", meaning: "Balance and patience are your allies. Partnerships, cooperation, and faith are being called forward. Stay the course." },
+    { name: "333", message: "The ascended masters are near, guiding and supporting you.", meaning: "Your creative energy is amplified. Express yourself fully — you are surrounded by spiritual teachers helping you grow." },
+    { name: "444", message: "Angels surround you now. You are protected and deeply loved.", meaning: "A foundation of stability and protection. Your angels are close, reinforcing that you are on the right path. Keep building." },
+    { name: "555", message: "Major change is coming. Release the old to welcome the new.", meaning: "Transformation is at your doorstep. Let go of what no longer serves you — something better is arriving to take its place." },
+    { name: "666", message: "Realign your thoughts. Return to balance between material and spiritual.", meaning: "Not a number to fear — it is a gentle nudge to refocus. You may be too caught up in worry or material concerns. Come back to center." },
+    { name: "777", message: "You are in divine flow. Miracles and blessings are unfolding.", meaning: "Deep spiritual alignment and luck. You have been doing the inner work, and the universe is rewarding your trust. Stay open." },
+    { name: "888", message: "Abundance is flowing toward you. Receive it with open arms.", meaning: "Financial and energetic prosperity are on their way. This number signals the completion of a cycle and the harvest of your efforts." },
+    { name: "999", message: "A chapter is closing. Honor the ending and prepare for a new beginning.", meaning: "Completion and release. Something in your life is reaching its natural conclusion — let it go gracefully to make room for what comes next." },
+    { name: "000", message: "You are one with the infinite. A new cycle begins from the void.", meaning: "The number of infinite potential. You stand at a blank canvas — everything is possible. Connect to source energy and begin again." },
+    { name: "1111", message: "A spiritual awakening is occurring. You are being called to a higher purpose.", meaning: "The master number of awakening. Pay attention to your thoughts and intentions right now — the gateway is wide open." },
+    { name: "1212", message: "Stay positive and trust that your dreams are being supported from above.", meaning: "A sign of encouragement from the divine. Keep your vibration high and know that your optimism is creating your reality." },
+    { name: "1010", message: "You are evolving. Trust the personal growth happening within you.", meaning: "Spiritual development and forward motion. The old version of you is falling away, revealing someone stronger and more aligned." },
+    { name: "1234", message: "You are on the right path. Keep moving step by step.", meaning: "A sequential sign of progress. Each step you take is leading somewhere meaningful — don't rush, just keep going." },
+    { name: "2222", message: "Have faith. Your prayers have been heard and are being answered.", meaning: "Doubled trust energy. The universe has received your intentions and is working behind the scenes. Patience will be rewarded." },
+    { name: "3333", message: "You are fully supported by the universe. Express your truth boldly.", meaning: "Amplified creative and spiritual power. Speak, create, and share without hesitation — your guides are cheering you on." },
+    { name: "4444", message: "Your angels are wrapping you in love. You are never alone.", meaning: "Quadrupled protection. During uncertain times, this number appears to remind you that divine support is absolute and unwavering." },
+    { name: "5555", message: "Massive shifts are underway. Embrace the unknown with courage.", meaning: "Accelerated change at every level. Hold on loosely and trust that the upheaval is clearing space for something extraordinary." },
+    { name: "1144", message: "Build your dreams on a foundation of faith and hard work.", meaning: "A blend of new beginnings and stable foundations. Your angels encourage you to take practical steps toward your spiritual calling." },
+    { name: "717", message: "You are on the right spiritual path. Keep going with confidence.", meaning: "A confirmation that your choices align with your soul's purpose. The angels celebrate your courage to follow your inner truth." },
+    { name: "911", message: "Your soul mission is calling. Step into your role as a lightworker.", meaning: "A number of spiritual service and leadership. You are being asked to use your gifts to uplift others — the world needs what you carry." },
+    { name: "808", message: "What was lost is being restored. Abundance circles back to you.", meaning: "Karmic balance and material recovery. The universe is returning to you what is rightfully yours — be ready to receive." },
   ];
 }
 

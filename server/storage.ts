@@ -31,6 +31,7 @@ export interface IStorage {
 
   getAngelCards(): Promise<AngelCard[]>;
   createAngelCard(card: InsertAngelCard): Promise<AngelCard>;
+  deleteAngelCard(id: string): Promise<void>;
   getLatestDraw(): Promise<(AngelCardDraw & { card: AngelCard }) | null>;
   createDraw(angelCardId: string): Promise<AngelCardDraw>;
 }
@@ -120,6 +121,10 @@ export class DatabaseStorage implements IStorage {
   async createAngelCard(card: InsertAngelCard): Promise<AngelCard> {
     const [created] = await db.insert(angelCards).values(card).returning();
     return created;
+  }
+
+  async deleteAngelCard(id: string): Promise<void> {
+    await db.delete(angelCards).where(eq(angelCards.id, id));
   }
 
   async getLatestDraw(): Promise<(AngelCardDraw & { card: AngelCard }) | null> {

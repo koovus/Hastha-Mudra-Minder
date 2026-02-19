@@ -69,7 +69,7 @@ function DrawnCard({ draw }: { draw: AngelCardDrawType }) {
             <div className="w-6 h-[1px] bg-secondary/30" />
           </div>
 
-          <h3 className="text-2xl font-serif text-foreground tracking-wide" data-testid="text-angel-card-name">
+          <h3 className="text-4xl font-serif text-primary tracking-[0.15em] font-medium" data-testid="text-angel-card-name">
             {draw.card.name}
           </h3>
 
@@ -145,10 +145,10 @@ export default function AngelCards() {
             Divine Guidance
           </p>
           <h2 className="text-2xl font-serif text-foreground leading-tight tracking-tight">
-            Angel Cards
+            Angel Numbers
           </h2>
           <p className="text-xs text-muted-foreground mt-2 max-w-[260px] mx-auto leading-relaxed">
-            Quiet your mind, shuffle the deck, and draw a card. Let the message find you.
+            Quiet your mind, shuffle the deck, and draw a number. Let the message find you.
           </p>
         </div>
 
