@@ -9,7 +9,7 @@ export default function Breathe() {
   return (
     <Layout>
       <div className="flex flex-col animate-in fade-in zoom-in duration-700 pb-8">
-        <div className="text-left mb-4">
+        <div className="text-center mb-4">
           <h2 className="text-3xl font-serif mb-1 tracking-tight">Kokyu</h2>
           <p className="text-muted-foreground text-xs tracking-[0.15em] uppercase">Breath is the bridge between body and spirit</p>
         </div>
