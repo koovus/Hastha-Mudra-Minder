@@ -33,8 +33,8 @@ export default function MudraDetail() {
   return (
     <Layout>
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 pb-8">
-        <Link href="/library" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground mb-6 transition-colors tracking-wide uppercase">
-            <ArrowLeft className="w-3 h-3 mr-1.5" /> Library
+        <Link href="/" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground mb-6 transition-colors tracking-wide uppercase">
+            <ArrowLeft className="w-3 h-3 mr-1.5" /> Home
         </Link>
 
         <div className="aspect-[4/3] w-full rounded-lg overflow-hidden bg-muted/20 mb-6 border border-border/30">
