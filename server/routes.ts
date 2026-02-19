@@ -78,6 +78,24 @@ export async function registerRoutes(
     res.json(entry);
   });
 
+  // --- Angel Cards ---
+  app.get("/api/angel-cards/current", async (_req, res) => {
+    const draw = await storage.getLatestDraw();
+    if (!draw) return res.json(null);
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    if (new Date(draw.drawnAt) < sevenDaysAgo) return res.json(null);
+    res.json(draw);
+  });
+
+  app.post("/api/angel-cards/draw", async (_req, res) => {
+    const cards = await storage.getAngelCards();
+    if (cards.length === 0) return res.status(404).json({ message: "No angel cards available" });
+    const random = cards[Math.floor(Math.random() * cards.length)];
+    const draw = await storage.createDraw(random.id);
+    const [card] = cards.filter(c => c.id === random.id);
+    res.json({ ...draw, card });
+  });
+
   // --- Seed built-in mudras ---
   app.post("/api/seed", async (_req, res) => {
     const existing = await storage.getMudras();
@@ -100,10 +118,48 @@ export async function registerRoutes(
         added++;
       }
     }
-    res.json({ message: `Added ${added}, removed ${removed}`, count: builtInMudras.length });
+    const existingCards = await storage.getAngelCards();
+    const existingCardNames = new Set(existingCards.map(c => c.name));
+    const builtInCards = getBuiltInAngelCards();
+    let cardsAdded = 0;
+    for (const c of builtInCards) {
+      if (!existingCardNames.has(c.name)) {
+        await storage.createAngelCard(c);
+        cardsAdded++;
+      }
+    }
+
+    res.json({ message: `Mudras: added ${added}, removed ${removed}. Angel cards: added ${cardsAdded}`, mudraCount: builtInMudras.length, cardCount: existingCards.length + cardsAdded });
   });
 
   return httpServer;
+}
+
+function getBuiltInAngelCards() {
+  return [
+    { name: "Grace", message: "Allow grace to flow through you. You are held in ways you cannot see.", meaning: "A reminder that unseen forces support you. Surrender the need to control and let life carry you forward with trust." },
+    { name: "Courage", message: "The strength you seek already lives within you. Step forward.", meaning: "You have faced difficulty before and emerged. This card calls you to act from your inner fire, not from fear." },
+    { name: "Patience", message: "What is meant for you will not pass you by. Trust the timing.", meaning: "Not everything blooms in the same season. This card asks you to release urgency and honor the natural rhythm of unfolding." },
+    { name: "Healing", message: "Your wounds are becoming your wisdom. Let the light in through the cracks.", meaning: "Pain that has been acknowledged transforms into understanding. This card signals a season of mending, body and spirit." },
+    { name: "Abundance", message: "Open your hands to receive. The universe gives generously to those who are ready.", meaning: "Abundance is not only material — it is love, time, creativity, and connection. Notice what is already overflowing in your life." },
+    { name: "Trust", message: "Even when you cannot see the path, the ground beneath you is solid.", meaning: "Doubt clouds vision but does not change reality. This card encourages you to keep walking, even in the dark." },
+    { name: "Joy", message: "Happiness is not something to chase. It is something to allow.", meaning: "Joy arrives when resistance softens. Let go of the belief that you must earn delight — it is your birthright." },
+    { name: "Release", message: "What you cling to, clings to you. Let it go and find yourself lighter.", meaning: "Holding on to what no longer serves you drains your energy. This card is permission to set down the weight." },
+    { name: "Clarity", message: "The fog is lifting. Soon you will see clearly what has always been true.", meaning: "Confusion is temporary. Be still, and the answers you seek will surface on their own." },
+    { name: "Protection", message: "You are surrounded by light. Nothing harmful can reach the center of who you are.", meaning: "This card reassures you that your essence is untouchable. External storms cannot disturb your deepest self." },
+    { name: "Forgiveness", message: "Forgiveness is not a gift to others. It is freedom for yourself.", meaning: "Carrying resentment binds you to the past. This card invites you to release, not for them, but for your own peace." },
+    { name: "Transformation", message: "You are not falling apart. You are falling into a new form.", meaning: "Change can feel like loss, but it is often rebirth. Trust the process of becoming who you are meant to be." },
+    { name: "Stillness", message: "In the quiet space between breaths, all answers rest.", meaning: "The world is loud, but wisdom speaks softly. This card invites you to stop doing and simply be." },
+    { name: "Connection", message: "You are never truly alone. Invisible threads bind you to all living things.", meaning: "Loneliness is an illusion of separation. This card reminds you that love is the fabric of existence." },
+    { name: "Purpose", message: "You are here for a reason. Even the smallest act carries meaning.", meaning: "Purpose is not one grand mission — it is the love you bring to ordinary moments. You are already fulfilling it." },
+    { name: "Gratitude", message: "The door to abundance opens with the key of thankfulness.", meaning: "When you honor what you have, more arrives. This card asks you to pause and count the blessings hiding in plain sight." },
+    { name: "Surrender", message: "Stop swimming against the current. Turn around and let the river carry you.", meaning: "Effort has its place, but so does yielding. This card signals it is time to trust a larger plan." },
+    { name: "Hope", message: "Even the longest night eventually gives way to dawn.", meaning: "No matter how dark the present feels, light is approaching. Hold on — the sunrise is closer than you think." },
+    { name: "Compassion", message: "Be gentle with yourself first. You cannot pour from an empty vessel.", meaning: "Self-compassion is not selfishness — it is the foundation of all kindness. Fill your own cup before serving others." },
+    { name: "Wisdom", message: "The answers are not above you. They are within you, waiting quietly.", meaning: "You already know more than you realize. This card encourages you to listen inward before seeking outward." },
+    { name: "Faith", message: "Believe in what you cannot yet see. The seed trusts the soil.", meaning: "Faith is action taken before proof arrives. Plant your intentions and trust the invisible process of growth." },
+    { name: "Harmony", message: "When you align with your true nature, everything else falls into place.", meaning: "Struggle often comes from living out of alignment. This card invites you to return to what feels authentic and whole." },
+  ];
 }
 
 function getBuiltInMudras() {

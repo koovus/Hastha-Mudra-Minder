@@ -23,3 +23,17 @@ export interface JournalEntryType {
   burnedAt: string | null;
   createdAt: string;
 }
+
+export interface AngelCardType {
+  id: string;
+  name: string;
+  message: string;
+  meaning: string;
+}
+
+export interface AngelCardDrawType {
+  id: string;
+  angelCardId: string;
+  drawnAt: string;
+  card: AngelCardType;
+}

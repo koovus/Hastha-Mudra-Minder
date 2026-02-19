@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Mic, Wind } from "lucide-react";
+import { Home, Mic, Wind, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -7,6 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
+    { href: "/angel-cards", icon: Sparkles, label: "Cards" },
     { href: "/breathe", icon: Wind, label: "Kokyu" },
     { href: "/journal", icon: Mic, label: "Journal" },
   ];

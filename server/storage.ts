@@ -4,10 +4,15 @@ import pg from "pg";
 import {
   mudras,
   journalEntries,
+  angelCards,
+  angelCardDraws,
   type Mudra,
   type InsertMudra,
   type JournalEntry,
   type InsertJournal,
+  type AngelCard,
+  type AngelCardDraw,
+  type InsertAngelCard,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -23,6 +28,11 @@ export interface IStorage {
   setBurnTimer(id: string, burnAt: Date): Promise<JournalEntry | undefined>;
   burnEntry(id: string): Promise<void>;
   burnExpiredEntries(): Promise<number>;
+
+  getAngelCards(): Promise<AngelCard[]>;
+  createAngelCard(card: InsertAngelCard): Promise<AngelCard>;
+  getLatestDraw(): Promise<(AngelCardDraw & { card: AngelCard }) | null>;
+  createDraw(angelCardId: string): Promise<AngelCardDraw>;
 }
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
@@ -101,6 +111,32 @@ export class DatabaseStorage implements IStorage {
     }
     
     return expired.length;
+  }
+
+  async getAngelCards(): Promise<AngelCard[]> {
+    return db.select().from(angelCards);
+  }
+
+  async createAngelCard(card: InsertAngelCard): Promise<AngelCard> {
+    const [created] = await db.insert(angelCards).values(card).returning();
+    return created;
+  }
+
+  async getLatestDraw(): Promise<(AngelCardDraw & { card: AngelCard }) | null> {
+    const [draw] = await db
+      .select()
+      .from(angelCardDraws)
+      .orderBy(desc(angelCardDraws.drawnAt))
+      .limit(1);
+    if (!draw) return null;
+    const [card] = await db.select().from(angelCards).where(eq(angelCards.id, draw.angelCardId));
+    if (!card) return null;
+    return { ...draw, card };
+  }
+
+  async createDraw(angelCardId: string): Promise<AngelCardDraw> {
+    const [created] = await db.insert(angelCardDraws).values({ angelCardId }).returning();
+    return created;
   }
 }
 

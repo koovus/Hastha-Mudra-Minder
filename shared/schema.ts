@@ -27,6 +27,19 @@ export const journalEntries = pgTable("journal_entries", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const angelCards = pgTable("angel_cards", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  message: text("message").notNull(),
+  meaning: text("meaning").notNull(),
+});
+
+export const angelCardDraws = pgTable("angel_card_draws", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  angelCardId: varchar("angel_card_id").notNull(),
+  drawnAt: timestamp("drawn_at").defaultNow().notNull(),
+});
+
 export const insertMudraSchema = createInsertSchema(mudras).omit({
   id: true,
   createdAt: true,
@@ -39,7 +52,20 @@ export const insertJournalSchema = createInsertSchema(journalEntries).omit({
   burnedAt: true,
 });
 
+export const insertAngelCardSchema = createInsertSchema(angelCards).omit({
+  id: true,
+});
+
+export const insertAngelCardDrawSchema = createInsertSchema(angelCardDraws).omit({
+  id: true,
+  drawnAt: true,
+});
+
 export type InsertMudra = z.infer<typeof insertMudraSchema>;
 export type Mudra = typeof mudras.$inferSelect;
 export type InsertJournal = z.infer<typeof insertJournalSchema>;
 export type JournalEntry = typeof journalEntries.$inferSelect;
+export type AngelCard = typeof angelCards.$inferSelect;
+export type AngelCardDraw = typeof angelCardDraws.$inferSelect;
+export type InsertAngelCard = z.infer<typeof insertAngelCardSchema>;
+export type InsertAngelCardDraw = z.infer<typeof insertAngelCardDrawSchema>;
