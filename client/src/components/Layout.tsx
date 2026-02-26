@@ -31,11 +31,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             const isActive = location === item.href;
             return (
               <Link key={item.href} href={item.href} className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 transition-colors duration-300 w-12",
-                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  "relative flex flex-col items-center justify-center gap-0.5 transition-all duration-300 w-12 py-1.5 rounded-lg",
+                  isActive
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground"
                 )}>
-                  <item.icon className="w-5 h-5" strokeWidth={isActive ? 2 : 1.5} />
-                  <span className="text-[9px] font-medium tracking-wider uppercase">{item.label}</span>
+                  {isActive && (
+                    <span className="absolute -top-[9px] left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-primary" />
+                  )}
+                  <item.icon className={cn("w-5 h-5 transition-transform duration-300", isActive && "scale-110")} strokeWidth={isActive ? 2.5 : 1.5} />
+                  <span className={cn("text-[9px] tracking-wider uppercase", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
               </Link>
             );
           })}
