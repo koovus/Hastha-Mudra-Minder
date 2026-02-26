@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <Layout>
       <div className="space-y-8 animate-in fade-in duration-700">
-        <div className="pt-4 pb-2">
+        <div className="pt-4 pb-2 text-center">
           <p className="text-xs text-muted-foreground uppercase tracking-[0.25em] font-medium mb-3">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
