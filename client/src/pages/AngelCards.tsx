@@ -118,10 +118,11 @@ export default function AngelCards() {
   const drawCard = useMutation({
     mutationFn: async () => {
       const res = await apiRequest("POST", "/api/angel-cards/draw");
-      return res.json();
+      return res.json() as Promise<AngelCardDrawType>;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/angel-cards/current"] });
+    onSuccess: (data) => {
+      queryClient.setQueryData(["/api/angel-cards/current"], data);
+      setShowDrawn(true);
       setJustDrawn(true);
     },
   });
